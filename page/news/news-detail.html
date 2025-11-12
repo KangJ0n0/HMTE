@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/style.css" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title id="page-title">Loading...</title>
+  </head>
+  <body class="bg-gray-900">
+    <div id="header-placeholder"></div>
+
+    <div class="container mx-auto px-4 md:px-10 lg:px-20">
+      <section class="py-16">
+        <div class="mx-auto px-6 max-w-4xl text-white">
+          <h1 id="detail-title" class="text-4xl font-extrabold mb-4 leading-tight">Memuat Judul...</h1>
+          <p class="text-sm font-semibold text-cyan-400 mb-8"><span id="detail-date">...</span> • <span id="detail-category">...</span></p>
+
+          <div class="overflow-hidden rounded-xl shadow-2xl mb-10 border border-gray-700" style="height: 450px">
+            <img id="detail-image" src="" alt="Cover Berita" class="w-full h-full object-cover" />
+          </div>
+
+          <div id="detail-content" class="text-gray-300 text-lg space-y-6">
+            <p>Memuat konten berita...</p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="/js/data/news.js"></script>
+    <script src="/js/loader.js"></script>
+
+    <script>
+      // Logika Detail Berita Utama
+      function loadNewsContent() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const newsId = urlParams.get("id");
+
+        const titleEl = document.getElementById("detail-title");
+        const dateEl = document.getElementById("detail-date");
+        const categoryEl = document.getElementById("detail-category");
+        const imageEl = document.getElementById("detail-image");
+        const contentEl = document.getElementById("detail-content");
+        const pageTitleEl = document.getElementById("page-title");
+
+        if (typeof newsData === "undefined") {
+          return;
+        }
+
+        const newsItem = newsData.find((item) => item.id === newsId);
+
+        if (newsItem) {
+          // FIX: Menyuntikkan Tanggal dan Kategori
+          titleEl.textContent = newsItem.title;
+          dateEl.textContent = newsItem.date;
+          categoryEl.textContent = newsItem.category;
+          pageTitleEl.textContent = newsItem.title + " | HMTE Unsoed";
+
+          // FIX: JALUR GAMBAR ABSOLUT
+          imageEl.src = "/" + newsItem.imgSrc;
+          imageEl.alt = newsItem.title;
+
+          contentEl.innerHTML = newsItem.content;
+        } else {
+          titleEl.textContent = "Berita Tidak Ditemukan (404)";
+          contentEl.innerHTML = "<p>Maaf, ID berita tidak valid. Silakan kembali.</p>";
+          imageEl.style.display = "none";
+          pageTitleEl.textContent = "404 - Tidak Ditemukan";
+        }
+      }
+
+      // Eksekusi: Setelah DOM siap, kita tunggu loader (yang sudah di-load di atas) selesai.
+      document.addEventListener("DOMContentLoaded", () => {
+        // Beri waktu 200ms agar loader.js selesai memuat Header/Footer
+        setTimeout(() => {
+          loadNewsContent();
+        }, 200);
+      });
+    </script>
+  </body>
+</html>

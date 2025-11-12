@@ -108,8 +108,49 @@
 
     .modal-text-content.show {
       opacity: 1;
-      transform: translateX(0);
-    }
+      transform:
+     translateX(0);
+    } 
+
+    /* Sembunyikan tombol prev/next di mobile */
+@media screen and (max-width: 768px) {
+  .modal-image-container button {
+    display: none !important;
+  }
+  
+  /* Optional: Buat gambar fullwidth di mobile tanpa padding untuk button */
+  .modal-image-container {
+    padding: 0 !important;
+  }
+  
+  .modal-image-container img {
+    padding: 1rem !important;
+  }
+}
+
+/* Tablet - tombol lebih kecil */
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+  .modal-image-container button {
+    padding: 0.5rem !important;
+  }
+  
+  .modal-image-container button svg {
+    width: 1rem !important;
+    height: 1rem !important;
+  }
+}
+
+/* Desktop - tombol normal */
+@media screen and (min-width: 1025px) {
+  .modal-image-container button {
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+  }
+  
+  .modal-image-container button:hover {
+    opacity: 1;
+  }
+}
   </style>
 
   <!-- icon -->
@@ -683,7 +724,7 @@
         "img/Asset Feed/BPH/3.jpg",
         "img/Asset Feed/BPH/4.jpg"
       ],
-      proker: [z
+      proker: [
         {
           title: "Ketua Himpunan",
           desc: "Menyelenggarakan rapat rutin untuk koordinasi antar divisi dan evaluasi program kerja."
