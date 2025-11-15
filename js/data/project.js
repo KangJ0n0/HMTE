@@ -38,14 +38,14 @@ const upcomingProjects = [
     title: "Dies Natalis Teknik Elektro ke-XXV",
     date: "2026-03-20",
     description: "Perayaan ulang tahun jurusan Teknik Elektro dengan berbagai lomba dan acara kebersamaan.",
-    pic: "BPH & MIKAT",
+    image: "img/Asset Feed/INTERNAL/3.webp",
   },
   {
     id: 5,
     title: "Workshop Laporan Keuangan Organisasi",
     date: "2026-01-15",
     description: "Pelatihan wajib bagi seluruh pengurus terkait standar pelaporan keuangan yang akuntabel.",
-    pic: "Divisi KWU",
+    image: "img/Asset Feed/MIKAT/1.jpg",
   },
 ];
 
@@ -57,6 +57,7 @@ const completedProjects = [
     description: "Acara temu kangen yang berhasil mengumpulkan lebih dari 200 alumni dari berbagai angkatan.",
     link: "page/project/docs/reuni-akbar-2025.html", // Path ke detail/dokumen
     image: "img/Asset Feed/MIKAT/1.jpg",
+    release: "loreeeem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
   },
   {
     id: 7,
@@ -65,6 +66,7 @@ const completedProjects = [
     description: "Proses rekrutmen anggota baru yang melibatkan seleksi ketat dan mentoring.",
     link: "page/project/docs/or-2025.html",
     image: "img/Asset Feed/PSDM/2.webp",
+    release: "loreeeem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
   },
 ];
 

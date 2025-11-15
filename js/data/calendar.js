@@ -1,4 +1,4 @@
-// calendar.js (Revisi untuk mendukung loading asinkron)
+// js/data/calendar.js (Revisi untuk mendukung loading asinkron)
 
 /**
  * Data Kegiatan Timeline
@@ -7,14 +7,24 @@
 const eventsData = [
   {
     id: 1,
-    date: "2025-11-15",
+    date: "2025-11-16",
     title: "Workshop Elektrikal: Dasar IoT",
     description: "Workshop mengenai dasar-dasar kelistrikan dan elektronika, fokus pada implementasi IoT sederhana.",
     time: "09:00 - 12:00 WIB",
     location: "Aula Teknik Elektro",
     color: "green",
-    isFeatured: true, // BARU: Tampilkan di Div 1/2
-    registrationLink: "https://forms.gle/linkgformworkshop", // BARU: Link pendaftaran
+    isFeatured: true, // Tampilkan di Div 1/2
+    registrationLink: "https://forms.gle/linkgformworkshop", // Link pendaftaran
+
+    // --- TAMBAHAN: Properti untuk Halaman Detail ---
+    imgSrc:
+      "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhYW9m0up3UQYsu5arRUR-1G3dxLO4Coeg91ua9SzAPLSJb4BHNi1-Qb4KcWNl4DV-6dLXbUlcBx_PxgNz_3u3e7fZUBpJTzVA11u4bDIhOTapbZBjamZ9k0lsXVCz487YKtjO5Ji3-WZ-cNi-cGZL4iynUsS3J2QeggO_c4xVQFDo7z1VdgG32Dq25NhI/s16000-rw/1001987567.jpg", // Path/link gambar cover event
+    locationLink: "https://maps.app.goo.gl/link-ke-aula-teknik", // Link Google Maps lokasi
+    content: `
+      <h3 class="text-xl font-bold mb-3 text-white">Detail Workshop</h3>
+      <p class="mb-4 text-gray-300">Workshop ini bertujuan membekali mahasiswa dengan keterampilan dasar dalam implementasi sistem IoT menggunakan mikrokontroler. Materi mencakup dasar elektronika, pemrograman, dan integrasi sensor.</p>
+      <p class="text-gray-300">Kegiatan ini sangat penting bagi mahasiswa yang ingin fokus pada bidang smart system dan embedded programming.</p>
+    `,
   },
   {
     id: 2,
@@ -24,8 +34,17 @@ const eventsData = [
     time: "13:00 - 16:00 WIB",
     location: "Gedung Convention Center",
     color: "blue",
-    isFeatured: true, // BARU
+    isFeatured: true,
     registrationLink: "https://forms.gle/linkgformseminar",
+
+    // --- TAMBAHAN: Properti untuk Halaman Detail ---
+    imgSrc: "https://pbs.twimg.com/media/G4QReueXwAASe_C.jpg", // Path/link gambar cover event
+    locationLink: "https://maps.app.goo.gl/link-ke-convention-center", // Link Google Maps lokasi
+    content: `
+      <h3 class="text-xl font-bold mb-3 text-white">Detail Seminar</h3>
+      <p class="mb-4 text-gray-300">Seminar ini menghadirkan pembicara kunci dari industri dan akademisi untuk membahas bagaimana Kecerdasan Buatan (AI) merevolusi sektor kelistrikan, mulai dari efisiensi energi hingga smart manufacturing.</p>
+      <p class="text-gray-300">Peserta akan mendapatkan wawasan mendalam tentang peluang karir di bidang AI dan Elektro.</p>
+    `,
   },
   {
     id: 3,
@@ -35,8 +54,13 @@ const eventsData = [
     time: "19:00 - 21:00 WIB",
     location: "Sekretariat HMTE",
     color: "yellow",
-    isFeatured: false, // BARU: Event internal, tidak ditampilkan di Div 1/2
+    isFeatured: false, // Event internal, tidak ditampilkan di Div 1/2
     registrationLink: null,
+
+    // --- TAMBAHAN: Properti untuk Halaman Detail ---
+    imgSrc: null,
+    locationLink: null,
+    content: `<p class="text-gray-300">Rapat internal rutin pengurus HMTE.</p>`,
   },
   {
     id: 4,
@@ -46,8 +70,13 @@ const eventsData = [
     time: "08:00 - 17:00 WIB",
     location: "PLN Unit Pembangkit XXX",
     color: "green",
-    isFeatured: true, // BARU
+    isFeatured: true,
     registrationLink: "https://forms.gle/linkgformkunjungan",
+
+    // --- TAMBAHAN: Properti untuk Halaman Detail ---
+    imgSrc: "../../img/event/kunjungan-pln-cover.webp",
+    locationLink: "https://maps.app.goo.gl/link-ke-pln-pembangkit",
+    content: `<p class="mb-4 text-gray-300">Kesempatan langka untuk melihat langsung operasional pembangkit listrik modern dan berinteraksi dengan insinyur profesional. Bus akan berangkat dari Kampus Teknik jam 07.30 WIB.</p>`,
   },
   {
     id: 5,
@@ -57,8 +86,13 @@ const eventsData = [
     time: "Sepanjang Hari",
     location: "Lab Komputer",
     color: "blue",
-    isFeatured: true, // BARU
+    isFeatured: true,
     registrationLink: "https://forms.gle/linkgformlomba",
+
+    // --- TAMBAHAN: Properti untuk Halaman Detail ---
+    imgSrc: "../../img/event/lomba-pcb-cover.webp",
+    locationLink: "https://maps.app.goo.gl/link-ke-lab-komputer",
+    content: `<p class="mb-4 text-gray-300">Tunjukkan keahlian Anda dalam merancang papan sirkuit tercetak (PCB). Kompetisi ini mengasah kemampuan teknis dan kreativitas. Batas akhir pengiriman desain adalah 10 Desember 2025.</p>`,
   },
 ];
 
@@ -152,8 +186,11 @@ function renderCalendar() {
     const dotColorClass = event ? colorMap[event.color].replace("bg-", "bg-") : "bg-transparent";
     const eventDot = event ? `<div class="absolute bottom-1 right-1 w-2 h-2 ${dotColorClass} rounded-full"></div>` : "";
 
+    // Mengubah link ke laman detail event jika isFeatured=true dan memiliki ID
+    const detailLink = event && event.isFeatured ? `window.location.href='event-detail.html?id=${event.id}'` : `showEventDetails('${dateStr}')`;
+
     calendarGrid.innerHTML += `
-            <div class="${classes}" onclick="showEventDetails('${dateStr}')">
+            <div class="${classes}" onclick="${detailLink}">
                 ${day}
                 ${eventDot}
             </div>
@@ -172,7 +209,7 @@ function renderCalendar() {
 }
 
 /**
- * Fungsi untuk tampilkan detail event
+ * Fungsi untuk tampilkan detail event (di sidebar/popup)
  */
 function showEventDetails(dateStr) {
   const event = eventsData.find((e) => e.date === dateStr);
@@ -196,6 +233,14 @@ function showEventDetails(dateStr) {
   };
   const borderColor = borderColorMap[eventColor];
 
+  // Tautan ke detail atau pendaftaran
+  const actionButton =
+    event && event.isFeatured && event.registrationLink
+      ? `<a href="${event.registrationLink}" target="_blank" class="mt-3 inline-block bg-green-500 text-white text-xs px-3 py-1 rounded hover:bg-green-600 transition">Daftar Sekarang</a>`
+      : event && event.isFeatured
+      ? `<a href="event-detail.html?id=${event.id}" class="mt-3 inline-block bg-cyan-500 text-white text-xs px-3 py-1 rounded hover:bg-cyan-600 transition">Lihat Detail</a>`
+      : "";
+
   if (event) {
     eventDetailsContainer.innerHTML = `
             <div class="bg-gray-900 rounded-lg p-4 border-l-4 ${borderColor}">
@@ -206,8 +251,9 @@ function showEventDetails(dateStr) {
                     <i class="fas fa-clock mr-1"></i> ${event.time}
                 </div>
                 <div class="text-cyan-400 text-xs">
-                    <i class="fas fa-map-marker-alt mr-1"></i> ${event.location}
+                    <i class="fas fa-map-marker-alt mr-1"></i> <a href="${event.locationLink}" target="_blank" class="${event.locationLink ? "underline hover:text-cyan-300" : ""}">${event.location}</a>
                 </div>
+                ${actionButton}
             </div>
         `;
   } else {
@@ -254,8 +300,11 @@ function displayUpcomingEvents() {
       const month = getMonthName(eventDate.getMonth()).substring(0, 3);
       const bgColor = colorMap[event.color] || "bg-gray-600";
 
+      // Tautan ke laman detail jika isFeatured
+      const cardAction = event.isFeatured ? `onclick="window.location.href='event-detail.html?id=${event.id}'"` : `onclick="showEventDetails('${event.date}')"`;
+
       return `
-            <div class="bg-gray-800 rounded-lg p-3 hover:bg-gray-700 transition">
+            <div class="bg-gray-800 rounded-lg p-3 hover:bg-gray-700 transition cursor-pointer" ${cardAction}>
                 <div class="flex items-start gap-3">
                     <div class="${bgColor} rounded-lg p-2 text-center min-w-[50px] shadow-md">
                         <div class="text-white font-bold text-xl">${day}</div>
@@ -314,7 +363,8 @@ window.initCalendar = function () {
   const today = new Date();
   const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
 
-  const firstUpcomingEvent = eventsData.filter((event) => event.date >= todayStr).sort((a, b) => new Date(a.date) - new Date(b.date))[0];
+  // Filter event yang akan datang (isFeatured=true)
+  const firstUpcomingEvent = eventsData.filter((event) => event.date >= todayStr && event.isFeatured).sort((a, b) => new Date(a.date) - new Date(b.date))[0];
 
   // Jika ada event terdekat (termasuk hari ini), tampilkan detailnya
   if (firstUpcomingEvent) {
