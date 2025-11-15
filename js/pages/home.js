@@ -26,7 +26,6 @@ function checkAndRenderHomeOngoing() {
 
 /**
  * Fungsi untuk merender 2 acara Upcoming terdekat di homepage (sections/ongoing.html).
- * FIX: Batasan slice diubah dari 3 menjadi 2.
  */
 function renderHomeOngoingEvents() {
   const container = document.getElementById("home-ongoing-container");
@@ -44,7 +43,7 @@ function renderHomeOngoingEvents() {
 
   futureEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-  // FIX: Mengambil hanya 2 acara teratas
+  // Mengambil hanya 2 acara teratas
   const featuredEvents = futureEvents.slice(0, 2);
 
   if (featuredEvents.length === 0) {
@@ -54,7 +53,8 @@ function renderHomeOngoingEvents() {
 
   const eventsHTML = featuredEvents
     .map((event) => {
-      const detailLink = `./page/event/event-detail.html?id=${event.id}`;
+      // FIX: Mengganti link detail dengan link ke Events utama
+      const mainEventLink = `./page/event/event.html`;
       let imagePath = event.imgSrc ? event.imgSrc.replace("../../", "") : "img/logohmte.png";
       if (imagePath.startsWith("../")) {
         imagePath = imagePath.substring(3);
@@ -68,21 +68,20 @@ function renderHomeOngoingEvents() {
         </button>
         `
         : `
-        <button onclick="window.location.href='${detailLink}'" class="mt-auto px-3 py-1 bg-cyan-600 text-white font-semibold rounded-lg hover:bg-cyan-700 transition text-sm w-full">
+        <button onclick="window.location.href='${mainEventLink}'" class="mt-auto px-3 py-1 bg-cyan-600 text-white font-semibold rounded-lg hover:bg-cyan-700 transition text-sm w-full">
             Lihat Detail
         </button>
         `;
 
       const borderColorClass = event.color === "green" ? "border-emerald-500" : event.color === "blue" ? "border-cyan-500" : "border-yellow-500";
 
-      // MENGGUNAKAN MARKUP POSTER BARU DARI USER
+      // FIX: Menghapus onclick dari wrapper div
       return `
         <div class="flex flex-col rounded-xl overflow-hidden
                     border ${borderColorClass}
                     transition-all duration-500
                     hover:border-green-500 hover:shadow-lg hover:shadow-green-500/40
-                    cursor-pointer bg-gray-900 w-full max-w-xs mx-auto"
-             onclick="window.location.href='${detailLink}'">
+                    cursor-default bg-gray-900 w-full max-w-xs mx-auto"> 
 
             <div class="flex items-center justify-center bg-black"
                  style="width: 100%; aspect-ratio: 9/12; overflow: hidden;">
@@ -94,10 +93,12 @@ function renderHomeOngoingEvents() {
             </div>
 
             <div class="p-3 flex flex-col flex-1 bg-gray-900">
-                <h3 class="text-sm font-bold text-white mb-1">${event.title}</h3>
-                <p class="text-gray-300 text-xs mb-3">
-                    ${formattedDate} • ${event.time} • ${event.location}
-                </p>
+                <h3 class="text-sm font-bold text-white mb-2">${event.title}</h3>
+                <div class="text-gray-300 text-xs mb-3 space-y-1">
+                    <p><i class="far fa-calendar-alt mr-1 text-cyan-400"></i> ${formattedDate}</p>
+                    <p><i class="fas fa-clock mr-1 text-cyan-400"></i> ${event.time}</p>
+                    <p class="truncate"><i class="fas fa-map-marker-alt mr-1 text-cyan-400"></i> ${event.location}</p>
+                </div>
                 ${actionButtonHTML}
             </div>
         </div>
@@ -110,7 +111,6 @@ function renderHomeOngoingEvents() {
 
 /**
  * Fungsi untuk merender Program Kerja unggulan (3 status).
- * (Logic tidak diubah, hanya disertakan untuk kelengkapan file)
  */
 function renderHomeProker() {
   const container = document.getElementById("home-proker-container");
@@ -123,6 +123,10 @@ function renderHomeProker() {
   }
 
   const projectsToShow = [];
+
+  // Existing date setup is needed here since this function runs independently
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
   // --- 1. Get Top Ongoing Project ---
   if (ongoingProjects.length > 0) {
@@ -188,22 +192,25 @@ function renderHomeProker() {
 
       return `
         <a href="${finalLink}" target="${target}" class="project-card flex flex-col bg-gray-800 rounded-xl shadow-lg overflow-hidden transition-transform transform hover:scale-[1.02] border-t-4 ${borderColor}">
-        
-        <div class="block relative h-72 overflow-hidden"> 
-            <img src="${imagePath}" alt="${project.title}" class="w-full h-full object-cover transition duration-300 ease-in-out hover:opacity-80" onerror="this.onerror=null;this.src='img/logohmte.png';">
-            <div class="absolute top-0 left-0 bg-gray-900 bg-opacity-70 text-xs text-white px-3 py-1 m-2 rounded-full font-bold">
-            ${project.type.toUpperCase()}
+            
+            <div class="block relative h-72 overflow-hidden"> 
+                <img src="${imagePath}" alt="${project.title}" class="w-full h-full object-cover transition duration-300 ease-in-out hover:opacity-80" onerror="this.onerror=null;this.src='img/logohmte.png';">
+                <div class="absolute top-0 left-0 bg-gray-900 bg-opacity-70 text-xs text-white px-3 py-1 m-2 rounded-full font-bold">
+                    ${project.type.toUpperCase()}
+                </div>
             </div>
-        </div>
 
-        <div class="p-5 flex flex-col flex-grow">
-            <h3 class="text-xl font-bold text-white mb-2 group-hover:text-cyan-400 transition">
-            ${project.title}
-            </h3>
-            <p class="text-gray-400 text-sm mb-3 flex-grow">${description}</p>
-            <p class="text-gray-500 text-xs mt-2">${project.type}: ${project.statusText}</p>
-            ${project.type === "Completed" ? `<span class="text-green-400 mt-2 text-sm font-semibold">Press Release →</span>` : ""}
-        </div>
+            <div class="p-5 flex flex-col flex-grow">
+                <h3 class="text-xl font-bold text-white mb-2 group-hover:text-cyan-400 transition">
+                    ${project.title}
+                </h3>
+                <p class="text-gray-400 text-sm mb-3 flex-grow">${description}</p>
+                <p class="text-gray-500 text-xs mt-2">${project.type}: ${project.statusText}</p>
+                
+                <span class="text-green-400 mt-2 text-sm font-semibold">
+                    ${project.type === "Completed" ? "Lihat Dokumen →" : "Lihat Proyek →"}
+                </span>
+            </div>
         </a>
       `;
     })

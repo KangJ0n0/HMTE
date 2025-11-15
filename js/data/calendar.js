@@ -1,8 +1,9 @@
-// js/data/calendar.js (Revisi untuk mendukung loading asinkron)
+// js/data/calendar.js (Revisi untuk menghilangkan navigasi)
 
 /**
  * Data Kegiatan Timeline
  * Format: YYYY-MM-DD
+ * NOTE: Data di sini hanya contoh, pastikan Anda menggunakan variabel global yang benar.
  */
 const eventsData = [
   {
@@ -97,12 +98,12 @@ const eventsData = [
 ];
 
 /**
- * State Calendar
+ * State Calendar (Diperlukan oleh renderCalendar dan changeMonth)
  */
 let currentMonth = new Date().getMonth();
 let currentYear = new Date().getFullYear();
 
-// === Helper Functions ===
+// === Helper Functions (Dipertahankan) ===
 
 function getDaysInMonth(month, year) {
   return new Date(year, month + 1, 0).getDate();
@@ -119,13 +120,15 @@ function getMonthName(month) {
 
 function hasEvent(day, month, year) {
   const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+  // NOTE: Akses ke variabel global eventsData dipertahankan
+  // Asumsi eventsData tetap digunakan secara global oleh script lain.
   return eventsData.find((event) => event.date === dateStr);
 }
 
-// === Main Functions ===
+// === Main Functions (Dipertahankan) ===
 
 /**
- * Fungsi untuk render kalender
+ * Fungsi untuk render kalender grid (showEventDetails dipertahankan)
  */
 function renderCalendar() {
   const calendarGrid = document.getElementById("calendar-grid");
@@ -135,32 +138,26 @@ function renderCalendar() {
     return;
   }
 
-  // Update display bulan/tahun
   monthYearDisplay.textContent = `${getMonthName(currentMonth)} ${currentYear}`;
-
-  // Clear grid
   calendarGrid.innerHTML = "";
 
   const daysInMonth = getDaysInMonth(currentMonth, currentYear);
   const firstDay = getFirstDayOfMonth(currentMonth, currentYear);
 
-  // Map warna event ke kelas Tailwind
   const colorMap = {
     green: "bg-green-600",
     blue: "bg-cyan-600",
-    yellow: "bg-yellow-500", // Menggunakan warna yang ada di desain Anda
+    yellow: "bg-yellow-500",
   };
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
 
-  // --- 1. Padding Tanggal Bulan Sebelumnya ---
   for (let i = 0; i < firstDay; i++) {
     calendarGrid.innerHTML += `<div class="p-2 text-center text-gray-700 text-sm"></div>`;
   }
 
-  // --- 2. Tanggal Bulan Ini ---
   for (let day = 1; day <= daysInMonth; day++) {
     const event = hasEvent(day, currentMonth, currentYear);
     const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
@@ -176,28 +173,23 @@ function renderCalendar() {
     if (event && !isToday) {
       const eventBgColor = colorMap[event.color] || "bg-green-600";
       classes = classes.replace("bg-gray-700", eventBgColor);
-      classes = classes.replace("hover:bg-gray-700", "hover:bg-gray-800"); // Hover agak gelap
+      classes = classes.replace("hover:bg-gray-700", "hover:bg-gray-800");
     } else if (event && isToday) {
-      // Hari ini dengan event, gunakan cyan + ring hijau
       classes += " ring-2 ring-green-400";
     }
 
-    // Dot penanda event (jika ada)
     const dotColorClass = event ? colorMap[event.color].replace("bg-", "bg-") : "bg-transparent";
     const eventDot = event ? `<div class="absolute bottom-1 right-1 w-2 h-2 ${dotColorClass} rounded-full"></div>` : "";
 
-    // Mengubah link ke laman detail event jika isFeatured=true dan memiliki ID
-    const detailLink = event && event.isFeatured ? `window.location.href='event-detail.html?id=${event.id}'` : `showEventDetails('${dateStr}')`;
-
+    // showEventDetails dipertahankan karena ini adalah aksi internal halaman
     calendarGrid.innerHTML += `
-            <div class="${classes}" onclick="${detailLink}">
+            <div class="${classes}" onclick="showEventDetails('${dateStr}')">
                 ${day}
                 ${eventDot}
             </div>
         `;
   }
 
-  // --- 3. Padding Tanggal Bulan Berikutnya ---
   const totalCells = firstDay + daysInMonth;
   const remainingCells = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
 
@@ -209,7 +201,7 @@ function renderCalendar() {
 }
 
 /**
- * Fungsi untuk tampilkan detail event (di sidebar/popup)
+ * Fungsi untuk tampilkan detail event (dipertahankan)
  */
 function showEventDetails(dateStr) {
   const event = eventsData.find((e) => e.date === dateStr);
@@ -217,14 +209,11 @@ function showEventDetails(dateStr) {
 
   if (!eventDetailsContainer) return;
 
-  // Tambahkan format tanggal ke detail
   const dateParts = dateStr.split("-");
-  // Menggunakan index 1 (bulan) dikurangi 1
   const eventDate = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
   const formattedDate = `${eventDate.getDate()} ${getMonthName(eventDate.getMonth())} ${eventDate.getFullYear()}`;
   const eventColor = event ? event.color : "gray";
 
-  // Map warna untuk border (jika ada event)
   const borderColorMap = {
     green: "border-green-500",
     blue: "border-cyan-500",
@@ -233,13 +222,8 @@ function showEventDetails(dateStr) {
   };
   const borderColor = borderColorMap[eventColor];
 
-  // Tautan ke detail atau pendaftaran
-  const actionButton =
-    event && event.isFeatured && event.registrationLink
-      ? `<a href="${event.registrationLink}" target="_blank" class="mt-3 inline-block bg-green-500 text-white text-xs px-3 py-1 rounded hover:bg-green-600 transition">Daftar Sekarang</a>`
-      : event && event.isFeatured
-      ? `<a href="event-detail.html?id=${event.id}" class="mt-3 inline-block bg-cyan-500 text-white text-xs px-3 py-1 rounded hover:bg-cyan-600 transition">Lihat Detail</a>`
-      : "";
+  // Tautan yang ada di detail event ini tidak mengarah ke halaman baru
+  const actionButton = event && event.registrationLink ? `<a href="${event.registrationLink}" target="_blank" class="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 transition text-sm font-semibold">Daftar</a>` : "";
 
   if (event) {
     eventDetailsContainer.innerHTML = `
@@ -250,8 +234,8 @@ function showEventDetails(dateStr) {
                 <div class="text-cyan-400 text-xs mb-1">
                     <i class="fas fa-clock mr-1"></i> ${event.time}
                 </div>
-                <div class="text-cyan-400 text-xs">
-                    <i class="fas fa-map-marker-alt mr-1"></i> <a href="${event.locationLink}" target="_blank" class="${event.locationLink ? "underline hover:text-cyan-300" : ""}">${event.location}</a>
+                <div class="text-cyan-400 text-xs mb-4">
+                    <i class="fas fa-map-marker-alt mr-1"></i> ${event.location}
                 </div>
                 ${actionButton}
             </div>
@@ -267,13 +251,13 @@ function showEventDetails(dateStr) {
 
 /**
  * Fungsi untuk tampilkan upcoming events di sidebar
+ * FIX: Menghilangkan window.location.href dari onclick.
  */
 function displayUpcomingEvents() {
   const upcomingContainer = document.getElementById("upcoming-events");
 
   if (!upcomingContainer) return;
 
-  // Filter event yang akan datang (termasuk hari ini)
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
@@ -300,8 +284,8 @@ function displayUpcomingEvents() {
       const month = getMonthName(eventDate.getMonth()).substring(0, 3);
       const bgColor = colorMap[event.color] || "bg-gray-600";
 
-      // Tautan ke laman detail jika isFeatured
-      const cardAction = event.isFeatured ? `onclick="window.location.href='event-detail.html?id=${event.id}'"` : `onclick="showEventDetails('${event.date}')"`;
+      // FIX: Menghilangkan logic window.location.href. Hanya mempertahankan showEventDetails.
+      const cardAction = `onclick="showEventDetails('${event.date}')"`;
 
       return `
             <div class="bg-gray-800 rounded-lg p-3 hover:bg-gray-700 transition cursor-pointer" ${cardAction}>
@@ -327,8 +311,7 @@ function displayUpcomingEvents() {
 }
 
 /**
- * Fungsi untuk navigasi bulan
- * Wajib di-expose ke window.
+ * Fungsi untuk navigasi bulan (Dipertahankan)
  */
 function changeMonth(direction) {
   currentMonth += direction;
@@ -353,20 +336,17 @@ window.showEventDetails = showEventDetails;
 
 /**
  * PENTING: Fungsi Inisialisasi yang dipanggil oleh loader.js
- * untuk memastikan elemen kalender sudah ada sebelum di-render.
  */
 window.initCalendar = function () {
   renderCalendar();
   displayUpcomingEvents();
 
-  // Perbaikan #2: Otomatis tampilkan detail event terdekat saat load
+  // Otomatis tampilkan detail event terdekat saat load
   const today = new Date();
   const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
 
-  // Filter event yang akan datang (isFeatured=true)
-  const firstUpcomingEvent = eventsData.filter((event) => event.date >= todayStr && event.isFeatured).sort((a, b) => new Date(a.date) - new Date(b.date))[0];
+  const firstUpcomingEvent = eventsData.filter((event) => event.date >= todayStr).sort((a, b) => new Date(a.date) - new Date(b.date))[0];
 
-  // Jika ada event terdekat (termasuk hari ini), tampilkan detailnya
   if (firstUpcomingEvent) {
     showEventDetails(firstUpcomingEvent.date);
   }
