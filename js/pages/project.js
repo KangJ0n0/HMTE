@@ -130,7 +130,7 @@ function loadProjectDetailPage() {
   const docLink = document.getElementById("documentation-link");
   if (project.link) {
     docLink.href = project.link;
-    docLink.textContent = "Lihat Dokumentasi Proyek";
+    docLink.textContent = "Lihat Dokumentasi Proker";
     docLink.classList.remove("hidden");
     docLink.classList.add(buttonColor);
   } else {
@@ -268,7 +268,7 @@ function renderCompletedProjects(projects) {
                     <p class="text-gray-400 text-sm mb-3 flex-grow">${description}</p>
                     <p class="text-gray-500 text-xs mt-auto">${project.statusText}</p>
                     
-                    ${project.link ? `<span class="text-cyan-400 mt-2 text-sm font-semibold">Dokumentasi  →</span>` : `<span class="text-gray-500 mt-2 text-xs">Detail tersedia</span>`}
+                    ${project.link ? `<span class="text-cyan-400 mt-2 text-sm font-semibold">Press Release  →</span>` : `<span class="text-gray-500 mt-2 text-xs">Detail tersedia</span>`}
                 </div>
             </a>
         `;

@@ -188,25 +188,22 @@ function renderHomeProker() {
 
       return `
         <a href="${finalLink}" target="${target}" class="project-card flex flex-col bg-gray-800 rounded-xl shadow-lg overflow-hidden transition-transform transform hover:scale-[1.02] border-t-4 ${borderColor}">
-            
-            <div class="block relative h-72 overflow-hidden"> 
-                <img src="${imagePath}" alt="${project.title}" class="w-full h-full object-cover transition duration-300 ease-in-out hover:opacity-80" onerror="this.onerror=null;this.src='img/logohmte.png';">
-                <div class="absolute top-0 left-0 bg-gray-900 bg-opacity-70 text-xs text-white px-3 py-1 m-2 rounded-full font-bold">
-                    ${project.type.toUpperCase()}
-                </div>
+        
+        <div class="block relative h-72 overflow-hidden"> 
+            <img src="${imagePath}" alt="${project.title}" class="w-full h-full object-cover transition duration-300 ease-in-out hover:opacity-80" onerror="this.onerror=null;this.src='img/logohmte.png';">
+            <div class="absolute top-0 left-0 bg-gray-900 bg-opacity-70 text-xs text-white px-3 py-1 m-2 rounded-full font-bold">
+            ${project.type.toUpperCase()}
             </div>
+        </div>
 
-            <div class="p-5 flex flex-col flex-grow">
-                <h3 class="text-xl font-bold text-white mb-2 group-hover:text-cyan-400 transition">
-                    ${project.title}
-                </h3>
-                <p class="text-gray-400 text-sm mb-3 flex-grow">${description}</p>
-                <p class="text-gray-500 text-xs mt-2">${project.type}: ${project.statusText}</p>
-                
-                <span class="text-green-400 mt-2 text-sm font-semibold">
-                    ${project.type === "Completed" ? "Lihat Dokumen →" : "Lihat Proyek →"}
-                </span>
-            </div>
+        <div class="p-5 flex flex-col flex-grow">
+            <h3 class="text-xl font-bold text-white mb-2 group-hover:text-cyan-400 transition">
+            ${project.title}
+            </h3>
+            <p class="text-gray-400 text-sm mb-3 flex-grow">${description}</p>
+            <p class="text-gray-500 text-xs mt-2">${project.type}: ${project.statusText}</p>
+            ${project.type === "Completed" ? `<span class="text-green-400 mt-2 text-sm font-semibold">Press Release →</span>` : ""}
+        </div>
         </a>
       `;
     })
